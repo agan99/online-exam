@@ -1,0 +1,57 @@
+<!-- 增加教师信息模态框 -->
+<div class="modal fade" id="saveModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">增加教师信息</h4>
+        <button type="button" class="close" data-dismiss="modal"><span
+                aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form id="save-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>姓名</label>
+            <input type="text" name="name" class="form-control">
+          </div>
+          <div class="form-group form_datetime">
+            <label>工号</label>
+            <input type="text" name="workNumber" class="form-control">
+          </div>
+          <div class="form-group form_datetime">
+            <label>密码</label>
+            <input type="password" name="password" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>所属学院</label>
+            <select name="academyId" style="width: 100%" class="academySelect">
+              <option>请选择</option>
+              <!-- 数据填充 -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>职位</label>
+            <select name="job" class="form-control job-select" style="width: 100%">
+              <option value="老师">老师</option>
+              <option value="副教授">副教授</option>
+              <option value="教授">教授</option>
+              <option value="讲师">讲师</option>
+              <option value="高级讲师">高级讲师</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>性别</label>
+            <select name="sex" class="form-control sex-select" style="width: 100%">
+              <option value="男">男</option>
+              <option value="女">女</option>
+            </select>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" onclick="saveTeacher()">确定</button>
+      </div>
+    </div>
+  </div>
+</div>

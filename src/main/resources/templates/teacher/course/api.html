@@ -1,0 +1,21 @@
+<script>
+    // 初始化表单
+    OesUtil.initNormalTable('#courseInfo', "/api/course/list?teacherId=" + '1',
+        "get", [{
+            title: '序号',
+            field: 'id',
+            sortable: false,
+            formatter: function (value, row, index) {
+                return index + 1;
+            }
+        }, {
+            title: '课程统一代码',
+            field: 'id',
+            sortable: false
+        }, {
+            title: '课程名称',
+            field: 'courseName',
+            sortable: false
+        }]);
+
+</script>

@@ -1,0 +1,49 @@
+<script>
+
+  $("#home").click(function () {
+    OesUtil.ajaxPage("#home", "/admin/home");
+  });
+  $("#announce").click(function () {
+    OesUtil.ajaxPage("#announce", "/admin/announce");
+  });
+  $("#course").click(function () {
+    OesUtil.ajaxPage("#course", "/admin/course");
+  });
+  $("#admin").click(function () {
+    OesUtil.ajaxPage("#admin", "/admin");
+  });
+  $("#paper").click(function () {
+    OesUtil.ajaxPage("#paper", "/admin/paper");
+  });
+  $("#teacher").click(function () {
+    OesUtil.ajaxPage("#teacher", "/admin/teacher");
+  });
+  $("#grade").click(function () {
+    OesUtil.ajaxPage("#grade", "/admin/grade");
+  });
+  $("#student").click(function () {
+    OesUtil.ajaxPage("#student", "/admin/student");
+  });
+  $("#major").click(function () {
+
+    OesUtil.ajaxPage("#major", "/admin/major");
+  });
+  $("#academy").click(function () {
+    OesUtil.ajaxPage("#academy", "/admin/academy");
+  });
+  $("#help").click(function () {
+    OesUtil.ajaxPage("#help", "/admin/help");
+  });
+  $("#update").click(function () {
+    OesUtil.ajaxPage("#update", "/admin/update/pass");
+  });
+
+  $(window).on("popstate", function () {
+    let state = history.state;
+    if (state === null) {
+      return;
+    }
+    OesUtil.ajaxPage(state.active, state.url);
+    history.replaceState(state, null, state.url);
+  });
+</script>

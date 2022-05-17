@@ -1,0 +1,15 @@
+<script>
+  // 删除试卷
+  function deletePaper(id) {
+    OesUtil.confirm("确定要删除试卷吗？", function () {
+      $.post("/api/paper/delete/" + id).done(function (data) {
+        if (data.state === "success") {
+          OesUtil.ajaxPage("#paper", "/teacher/paper");
+        } else {
+          toastr.error(data.message);
+        }
+      })
+    });
+  }
+
+</script>

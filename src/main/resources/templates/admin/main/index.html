@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>在线考试系统 | 管理端</title>
+    <%include("../../include/css.html"){}%>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <%include("../include/header.html"){}%>
+    <!-- 左侧菜单栏 -->
+    <% layout("../include/sider.html",{name:"index"}){} %>
+    <div class="content-wrapper">
+        <!-- 异步加载区域 -->
+    </div>
+    <!-- footer -->
+    <% layout("../../include/footer.html"){} %>
+</body>
+<% include("../../include/js.html"){} %>
+<% include("api.html"){} %>
+<script>
+    OesUtil.ajaxPage("home", "/admin/home")
+</script>
+</html>
