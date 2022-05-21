@@ -1,7 +1,9 @@
 package com.agan.exam.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,6 +12,8 @@ import javax.validation.constraints.NotNull;
  * 增加班级实体类
  */
 
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class ImportGradeDto {
@@ -22,6 +26,5 @@ public class ImportGradeDto {
 
   @NotBlank(message = "班级{required}")
   private String gradeNumbers;
-
 
 }

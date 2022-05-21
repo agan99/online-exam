@@ -1,6 +1,6 @@
 package com.agan.exam.controller.rest;
 
-import com.agan.exam.base.R;
+import com.agan.exam.base.AjaxResponse;
 import com.agan.exam.model.Course;
 import com.agan.exam.model.dto.QueryCourseDto;
 import com.agan.exam.server.CourseService;
@@ -13,6 +13,9 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 课程管理 api
+ */
 @RestController
 @RequestMapping("/api/course")
 public class CourseController {
@@ -20,9 +23,25 @@ public class CourseController {
     @Resource
     private CourseService courseService;
 
-    @GetMapping("/list")
-    public Map<String, Object> pageCourse(Page<Course> page, QueryCourseDto entity) {
-        return this.courseService.listPage(page, entity);
+    /**
+     * 分页显示课程信息
+     * @param page 分页信息
+     * @param entity 查询关键字
+     * @return 课程信息
+     */
+    @GetMapping("/listByPage")
+    public AjaxResponse pageCourse(Page<Course> page, QueryCourseDto entity) {
+        return AjaxResponse.success(courseService.listPage(page, entity));
+    }
+
+    /**
+     * 根据id查看课程信息
+     * @param id 课程ID
+     * @return 课程信息
+     */
+    @GetMapping("/{id}")
+    public AjaxResponse getCourse(@PathVariable Integer id) {
+        return AjaxResponse.success(this.courseService.getById(id));
     }
 
     @GetMapping("/lists")
@@ -35,24 +54,13 @@ public class CourseController {
     }
 
     /**
-     * 查询一个老师所教的所有课程
-     * @param teacherId
-     * @return
+     * 添加课程
+     * @return 成功信息
      */
-    @GetMapping("/teacher/{teacherId}")
-    public List<Course> listByTeacherId(@PathVariable Integer teacherId) {
-        return this.courseService.listByTeacherId(teacherId);
-    }
-
-    /**
-     * 查看课程
-     *
-     * @param id 课程ID
-     * @return 删除成功信息
-     */
-    @GetMapping("/{id}")
-    public Course getCourse(@PathVariable Integer id) {
-        return this.courseService.getById(id);
+    @PostMapping("/save")
+    public AjaxResponse saveCourse(@Valid Course course) {
+        course.setTeacherIds("1");
+        return AjaxResponse.success(this.courseService.save(course));
     }
 
     /**
@@ -61,31 +69,26 @@ public class CourseController {
      * @return 删除成功信息
      */
     @PostMapping("/delete/{id}")
-    public R delCourse(@PathVariable Integer id) {
-        // 调用课程删除接口
-        this.courseService.removeById(id);
-        return R.success();
-    }
-
-    /**
-     * 添加课程
-     *
-     * @return 成功信息
-     */
-    @PostMapping("/save")
-    public R newCourse(@Valid Course course) {
-        this.courseService.save(course);
-        return R.success();
+    public AjaxResponse deleteCourse(@PathVariable Integer id) {
+        return AjaxResponse.success(this.courseService.removeById(id));
     }
 
     /**
      * 更新课程
-     *
      * @return 成功信息
      */
     @PostMapping("/update")
-    public R updateCourse(Course course) {
-        this.courseService.update(course);
-        return R.success();
+    public AjaxResponse updateCourse(Course course) {
+        return AjaxResponse.success(this.courseService.update(course));
+    }
+
+    /**
+     * 根据 教师id 查询所教课程信息
+     * @param teacherId 教师id
+     * @return 课程信息
+     */
+    @GetMapping("/teacher/{teacherId}")
+    public List<Course> listByTeacherId(@PathVariable Integer teacherId) {
+        return this.courseService.listByTeacherId(teacherId);
     }
 }

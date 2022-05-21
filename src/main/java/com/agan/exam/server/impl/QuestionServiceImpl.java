@@ -16,7 +16,9 @@ import com.agan.exam.server.CourseService;
 import com.agan.exam.server.QuestionService;
 import com.agan.exam.server.TypeService;
 import com.agan.exam.util.BeanUtil;
+import com.agan.exam.util.HttpUtil;
 import com.agan.exam.util.PageUtil;
+import com.agan.exam.util.SysConsts;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -42,14 +44,15 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDAO, Question> impl
     private final PaperDAO paperDAO;
 
     /**
-     * 显示试题库并分页
+     * 查询题库
      * @param page   分页信息
      * @param entity 模糊条件
-     * @return 分页信息结果集
+     * @return 返回题库列表
      */
     @Override
     public Map<String, Object> listPage(Page<Question> page, QueryQuestionDto entity) {
-        List<Integer> courseIds = this.courseService.listIdByTeacherId(1);
+        Teacher teacher = (Teacher) HttpUtil.getAttribute(SysConsts.Session.TEACHER);
+        List<Integer> courseIds = this.courseService.listIdByTeacherId(teacher.getId());
 
         // 没有课程，直接返回一个空的数据集合
         if (CollUtil.isEmpty(courseIds)) {
@@ -67,18 +70,16 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDAO, Question> impl
         if (entity.getTypeId() != null) {
             qw.eq(Question::getTypeId, entity.getTypeId());
         }
+        // 题目名字不为空，加入判断条件
         if (entity.getQuestionName() != null) {
             qw.like(Question::getQuestionName, entity.getQuestionName());
         }
-        // 查询试题集合信息
-        Page<Question> pageInfo = questionDAO.selectPage(page, qw);
 
-        return PageUtil.toPage(pageInfo);
+        return PageUtil.toPage(questionDAO.selectPage(page, qw));
     }
 
     /**
      * 通过试卷答题记录查询问题的正确答案集合
-     *
      * @param entity 答题记录数据传输对象
      * @return 题目集合
      */
@@ -103,12 +104,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDAO, Question> impl
     public QuestionVo selectVoById(Integer id) {
         Question question = this.questionDAO.selectById(id);
         QuestionVo result = BeanUtil.copyObject(question, QuestionVo.class);
+
         result.setCourse(this.courseService.getById(question.getCourseId()));
         result.setType(this.typeService.getById(question.getTypeId()));
-        // 获取题目的教师信息
-        int teacherId = question.getTeacherId();
-        Teacher teacher = this.teacherDAO.selectById(teacherId);
-        result.setTeacher(teacher);
+        result.setTeacher(this.teacherDAO.selectById(question.getTeacherId()));
+
         return result;
     }
 
@@ -141,7 +141,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionDAO, Question> impl
 
     /**
      * 通过题目类型 ID 和课程 ID 获取问题 List 集合
-     *
      * @param typeId   题目类型ID
      * @param courseId 课程ID
      * @return 问题集合

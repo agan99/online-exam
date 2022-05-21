@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,15 +38,38 @@ public class CourseServiceImpl extends ServiceImpl<CourseDAO, Course> implements
      */
     @Override
     public Map<String, Object> listPage(Page<Course> page, QueryCourseDto entity) {
-        List<Course> courses = this.courseDAO.listByTeacherId(entity.getTeacherId());
-
-        // 统计集合总数
-        int total = courses.size();
-        courses = PageUtil.toPage(page.getCurrent(), page.getSize(), courses);
-
-        return PageUtil.toPage(courses, total);
-
+        if (entity.getTeacherId() != null) {
+            List<Course> courses = this.courseDAO.listByTeacherId(entity.getTeacherId());
+            // 过滤所属学院信息
+            if (entity.getAcademyId() != null) {
+                courses = courses.stream()
+                        .filter(course -> course.getAcademyId().equals(entity.getAcademyId()))
+                        .collect(Collectors.toList());
+            }
+            // 课程名称模糊搜索
+            if (StrUtil.isNotBlank(entity.getKey())) {
+                courses = courses.stream()
+                        .filter(course -> course.getCourseName().contains(entity.getKey()))
+                        .collect(Collectors.toList());
+            }
+            // 统计集合总数
+            int total = courses.size();
+            // List 分页
+            courses = PageUtil.toPage(page.getCurrent(), page.getSize(), courses);
+            return PageUtil.toPageList(courses, total);
+        } else {
+            LambdaQueryWrapper<Course> qw = new LambdaQueryWrapper<>();
+            if (entity.getAcademyId() != null) {
+                qw.eq(Course::getAcademyId, entity.getAcademyId());
+            }
+            if (StrUtil.isNotBlank(entity.getKey())) {
+                qw.like(Course::getCourseName, entity.getKey());
+            }
+            Page<Course> pageInfo = this.courseDAO.selectPage(page, qw);
+            return PageUtil.toPageList(pageInfo);
+        }
     }
+
 
     @Override
     public List<Integer> listIdByTeacherId(Integer teacherId) {

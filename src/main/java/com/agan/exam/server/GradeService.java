@@ -33,12 +33,12 @@ public interface GradeService extends IService<Grade> {
      * 增加班级
      * @param entity 班级信息
      */
-    void save(ImportGradeDto entity);
+    int save(ImportGradeDto entity);
 
     /**
      * 通过专业id查询班级
      * @param majorId 专业id
      * @return 班级集合
      */
-    List<Grade> listByMajorId(Integer majorId);
+    List<Grade> getGradesByMajorId(Integer majorId);
 }

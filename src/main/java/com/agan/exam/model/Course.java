@@ -43,14 +43,12 @@ public class Course {
    * 教师工号列表
    */
   @TableField(exist = false)
-  @NotBlank(message = "教师工号{required}")
   private String workNumbers;
 
   /**
    * 教师姓名列表
    */
   @TableField(exist = false)
-  @NotBlank(message = "教师姓名{required}")
   private String names;
 
   /**

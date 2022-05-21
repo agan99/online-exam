@@ -332,12 +332,12 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
         int index;
         for (int i = 0; i < num; i++) {
             try {
-                // 利用题序集合长度 -1 作为随机因子，随机取索引值
-                int bound = ids.size();
-                index = bound <= 1 ? 0 : random.nextInt(bound - 1);
-                // 从题序集合中获取该索引的题
+                // 把题目集合的长度 -1 作为随机因子
+                int x = ids.size();
+                index = x <= 1 ? 0 : random.nextInt(x - 1);
+                // 按随机数取出题目
                 result.add(ids.get(index));
-                // 移除该题序防止题目重复，同时保证题序集合长度在安全范围内进行随机取值
+                // 删除该题目防止题目重复
                 ids.remove(index);
             } catch (Exception e) {
                 // 捕捉题序集合索引溢出异常，说明题目数量不够进行随机组题
@@ -359,7 +359,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
         if (paper.getLevel() == null || StrUtil.isBlank(paper.getGradeIds())) {
             throw new ServiceException("请填写年级和班级信息");
         }
-        List<Grade> grades = this.gradeService.listByMajorId(paper.getMajorId());
+        List<Grade> grades = this.gradeService.getGradesByMajorId(paper.getMajorId());
         if (CollUtil.isEmpty(grades)) {
             throw new ServiceException("专业不存在班级，请添加班级");
         }

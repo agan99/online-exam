@@ -17,7 +17,7 @@ public interface MajorService extends IService<Major> {
      * @param major 模糊查询条件
      * @return 专业集合信息
      */
-    Map<String, Object> listPageMajor(Page<Major> page, Major major);
+    Map<String, Object> listByPageMajor(Page<Major> page, Major major);
 
     /**
      * 通过学院 ID 获取专业集合

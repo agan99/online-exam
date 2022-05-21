@@ -23,9 +23,4 @@ public class QuestionType {
          */
         private String typeName;
 
-        /**
-         * 该类型题目的分数
-         */
-        private String score;
-
 }

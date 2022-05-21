@@ -119,6 +119,63 @@ OesUtil.bindRequest = function bindRequest(bindElement, tableElement, timeout) {
  * @param method 请求方式
  * @param columns 表单数据
  */
+OesUtil.initTable = function initTable(e, api, method, columns) {
+  $(e).bootstrapTable({
+    method: method,
+    url: api,
+    queryParamsType: '',
+    queryParams: function (params) {
+      return {current: params.pageNumber, size: params.pageSize}
+    },
+    // 把数据转换成可以接收的数据格式
+    responseHandler: function (res) {
+      return res.data;
+    },
+    buttonsClass: 'primary',
+    pageNumber: 1,
+    pageSize: 10,
+    pageList: [5, 10, 20, 30, 50],
+    pagination: true,
+    sidePagination: 'server',
+    columns: columns
+  })
+}
+
+/**
+ * 封装自定义参数的表单
+ * @param e ID / class
+ * @param api 请求数据接口
+ * @param method 请求方式
+ * @param columns 表单数据
+ * @param params 模糊条件参数
+ */
+OesUtil.queryTable = function queryTable(e, api, method, columns, params) {
+  $(e).bootstrapTable({
+    method: method,
+    url: api,
+    queryParamsType: '',
+    queryParams: params,
+    // 把数据转换成可以接收的数据格式
+    responseHandler: function (res) {
+      return res.data;
+    },
+    buttonsClass: 'primary',
+    pageNumber: 1,
+    pageSize: 10,
+    pageList: [5, 10, 20, 30, 50],
+    pagination: true,
+    sidePagination: 'server',
+    columns: columns
+  })
+};
+
+/**
+ * 封装简单的表单
+ * @param e ID / class
+ * @param api 请求数据接口
+ * @param method 请求方式
+ * @param columns 表单数据
+ */
 OesUtil.initNormalTable = function normalTable(e, api, method, columns) {
   $(e).bootstrapTable({
     method: method,

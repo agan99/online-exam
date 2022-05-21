@@ -17,6 +17,30 @@ public class PageUtil {
     }
 
     /**
+     * 分页数据处理
+     * @param page 数据
+     * @param <T> 泛型
+     * @return 分页数据
+     */
+    public static <T> Map<String, Object> toPageList(IPage<T> page) {
+        Map<String, Object> map = Maps.newLinkedHashMap();
+        map.put("rows", page.getRecords());
+        map.put("total", page.getTotal());
+        return map;
+    }
+
+    /**
+     * Page 数据处理，预防redis反序列化报错
+     */
+    public static <T> Map<String, Object> toPageList(T records, long total) {
+        Map<String, Object> map = Maps.newLinkedHashMap();
+        map.put("rows", records);
+        map.put("total", total);
+        return map;
+    }
+
+
+    /**
      * Page 数据处理，预防redis反序列化报错
      */
     public static <T> Map<String, Object> toPage(IPage<T> page) {
@@ -35,6 +59,7 @@ public class PageUtil {
         map.put("total", total);
         return map;
     }
+
     /**
      * List<T> 分页
      */

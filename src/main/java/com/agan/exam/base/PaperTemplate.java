@@ -17,11 +17,11 @@ public class PaperTemplate {
 
     public ArrayList<QuestionType> QuestionTypeTemplate01(){
         ArrayList<QuestionType> questionTypes = new ArrayList<>();
-        questionTypes.add(new QuestionType(1,"单选题","5"));
-        questionTypes.add(new QuestionType(2,"多选题","10"));
-        questionTypes.add(new QuestionType(3,"判断题","5"));
-        questionTypes.add(new QuestionType(4,"填空题","4"));
-        questionTypes.add(new QuestionType(5,"简答题","20"));
+        questionTypes.add(new QuestionType(1,"单选题"));
+        questionTypes.add(new QuestionType(2,"多选题"));
+        questionTypes.add(new QuestionType(3,"判断题"));
+        questionTypes.add(new QuestionType(4,"填空题"));
+        questionTypes.add(new QuestionType(5,"简答题"));
         return questionTypes;
     }
 

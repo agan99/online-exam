@@ -1,122 +1,96 @@
 <script>
-
-  function operateFormatter(value, row, index) {
-    return [' <button class="btn btn-success btn-sm" onclick="goUpdate(' + row.id
-    + ')">指派教师 </button> ' + ' <button class="rowDel btn btn-danger btn-sm" onclick="deleteCourse('
-    + row.id
-    + ')">删除</button>'].join('');
-  }
-
-  // 模糊搜索参数
-  function params(params) {
-    return {
-      current: params.pageNumber,
-      size: params.pageSize,
-      key: $('#findKey').val()
-    };
-  }
-
-  // 初始化表单
-  OesUtil.initQueryTable('#courseInfo', "/api/course/lists",
-          "get", [{
-            title: '序号',
-            field: 'id',
-            sortable: false,
+    // -------------------------------------- 初始化表单 -----------------------------------
+    OesUtil.queryTable('#courseInfo', "/api/course/listByPage", "get", [
+        {title: '序号', field: 'id', sortable: false,
             formatter: function (value, row, index) {
-              return index + 1;
+                return index + 1;
+        }},
+        {title: '课程统一代码', field: 'id', sortable: false },
+        {title: '课程名称', field: 'courseName', sortable: false},
+        {field: 'operate', title: '操作', formatter: function (value, row, index) {
+            return [' <button class="btn btn-success btn-sm" ' +
+            'onclick="goUpdate(' + row.id+ ')">指派教师 </button> ' +
+            ' <button class="rowDel btn btn-danger btn-sm" ' +
+            'onclick="deleteCourse('+ row.id + ')">删除</button>'].join('');}}
+        ], function (params) {
+            return {
+                current: params.pageNumber,
+                size: params.pageSize,
+                key: $('#findKey').val()
+            };
+    });
+
+    // 课程名称模糊搜索
+    OesUtil.bindRequest('#findKey', '#courseInfo', 200);
+
+    // -------------------------------------- 增加课程 -----------------------------------
+    // 添加课程模态框打开
+    $("#goSave").click(function () {
+        $("#save-modal").modal({show: true, backdrop: 'static'});
+    });
+
+    // 增加课程
+    $("#saveBtn").click(function () {
+        OesUtil.confirm('确定添加课程吗？', function () {
+            let data = $('#save-form').serialize();
+            $.post("/api/course/save", data).done(function (data) {
+                if (data.code === 200) {
+                    OesUtil.closeModal("#save-modal");
+                    $('#save-form')[0].reset();
+                    OesUtil.refreshTable("#courseInfo");
+                } else {
+                    toastr.error(data.message);
+                }
+            })
+        })
+    });
+
+    // -------------------------------------- 删除课程 ----------------------------------
+    function deleteCourse(id) {
+        OesUtil.confirm("确定删除该课程吗？", function () {
+            $.post("/api/course/delete/" + id).done(function (data) {
+            if (data.code === 200) {
+              OesUtil.refreshTable("#courseInfo");
+            } else {
+              toastr.error(data.message);
             }
-          }, {
-            title: '课程统一代码',
-            field: 'id',
-            sortable: false
-          }, {
-            title: '课程名称',
-            field: 'courseName',
-            sortable: false
-          }, {
-            field: 'operate',
-            title: '操作',
-            formatter: operateFormatter//html
-          }],params);
+          })
+    });}
 
-  // 课程名称模糊搜索
-  OesUtil.bindRequest('#findKey', '#courseInfo', 200);
+    // -------------------------------------- 指派老师 ----------------------------------
+    // 获取课程信息并启动修改模态框
+    function goUpdate(id) {
+        $.get("/api/course/" + id, function (data) {
+          $('.id').val(data.data.id);
+          $('.courseName').val(data.data.courseName);
+          $('.names').val(data.data.names);
+          $('.workNumbers').val(data.data.workNumbers);
+          $('.academyName').val(data.data.academy.name);
+          $("#update-modal").modal({show: true, backdrop: 'static'});
+    });}
 
-  // 删除课程
-  function deleteCourse(id) {
-    OesUtil.confirm("确定删除该课程吗？", function () {
-      $.post("/api/course/delete/" + id).done(function (data) {
-        if (data.state === "success") {
-          OesUtil.refreshTable("#courseInfo");
-        } else {
-          toastr.error(data.message);
-        }
-      })
-    })
-  }
+    // 更新课程信息
+    function updateCourse() {
+        OesUtil.confirm('确定修改信息吗?', function () {
+          let data = $('#update-form').serialize();
+          $.post("/api/course/update/", data).done(function (data) {
+            if (data.code === 200) {
+              OesUtil.closeModal("#update-modal");
+              $('#update-form')[0].reset();
+              OesUtil.refreshTable("#courseInfo");
+            } else {
+              toastr.error(data.message);
+            }
+          });
+    });}
 
-  //添加课程模态框打开
-  $("#goSave").click(function () {
-    $("#save-modal").modal({
-      show: true,
-      backdrop: 'static'
+    // 填充学院信息
+    $.get("/api/academy").done(function (data) {
+        let options = "";
+        $('.academySelect').empty();
+        $.each(data.data, function (index, e) {
+            options += "<option value=" + e.id + ">" + e.name + "</option>";
+        });
+        $(".academySelect").append(options).val('').select2({theme: 'bootstrap4'});
     });
-  });
-
-  // 增加课程
-  $("#saveBtn").click(function () {
-    OesUtil.confirm('确定添加课程吗？', function () {
-      let data = $('#save-form').serialize();
-      $.post("/api/course/save", data).done(function (data) {
-        if (data.state === "success") {
-          OesUtil.closeModal("#save-modal");
-          $('#save-form')[0].reset();
-          OesUtil.refreshTable("#courseInfo");
-        } else {
-          toastr.error(data.message);
-        }
-      })
-    })
-  });
-
-  // 获取课程信息并启动修改模态框
-  function goUpdate(id) {
-    $.get("/api/course/" + id, function (data) {
-      $('.id').val(data.id);
-      $('.courseName').val(data.courseName);
-      $('.names').val(data.names);
-      $('.workNumbers').val(data.workNumbers);
-      $('.academyName').val(data.academy.name);
-      $("#update-modal").modal({
-        show: true,
-        backdrop: 'static'
-      });
-    })
-  }
-
-  // 更新专业信息
-  function updateCourse() {
-    OesUtil.confirm('确定修改信息吗?', function () {
-      let data = $('#update-form').serialize();
-      $.post("/api/course/update/", data).done(function (data) {
-        if (data.state === "success") {
-          OesUtil.closeModal("#update-modal");
-          $('#update-form')[0].reset();
-          OesUtil.refreshTable("#courseInfo");
-        } else {
-          toastr.error(data.message);
-        }
-      })
-    })
-  }
-
-  // 填充学院信息
-  $.get("/api/academy").done(function (data) {
-    let options = "";
-    $('.academySelect').empty();
-    $.each(data, function (index, e) {
-        options += "<option value=" + e.id + ">" + e.name + "</option>";
-    });
-    $(".academySelect").append(options).val('').select2({theme: 'bootstrap4'});
-  });
 </script>

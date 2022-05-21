@@ -14,11 +14,10 @@ import java.util.Map;
 public interface QuestionService  extends IService<Question> {
 
     /**
-     * 显示试题库并分页
-     *
+     * 查询题库
      * @param page   分页信息
      * @param entity 模糊条件
-     * @return 分页信息结果集
+     * @return 返回题库列表
      */
     Map<String, Object> listPage(Page<Question> page, QueryQuestionDto entity);
 

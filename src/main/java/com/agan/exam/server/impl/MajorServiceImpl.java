@@ -26,8 +26,8 @@ public class MajorServiceImpl extends ServiceImpl<MajorDAO, Major> implements Ma
      * @return 专业集合信息
      */
     @Override
-    public Map<String, Object> listPageMajor(Page<Major> page, Major major) {
-        return PageUtil.toPage(this.majorDAO.listPageMajorVo(page, major));
+    public Map<String, Object> listByPageMajor(Page<Major> page, Major major) {
+        return PageUtil.toPageList(this.majorDAO.listPageMajorVo(page, major));
     }
 
     /**
@@ -38,7 +38,6 @@ public class MajorServiceImpl extends ServiceImpl<MajorDAO, Major> implements Ma
     @Override
     public List<Major> listByAcademyId(Integer academyId) {
         LambdaQueryWrapper<Major> qw = new LambdaQueryWrapper<>();
-        qw.eq(Major::getAcademyId, academyId);
-        return this.majorDAO.selectList(qw);
+        return this.majorDAO.selectList(qw.eq(Major::getAcademyId, academyId));
     }
 }

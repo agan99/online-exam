@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Map;
 
+/**
+ * 题库controller
+ */
 @RestController
 @RequestMapping("/api/question")
 public class QuestionController {
@@ -22,16 +25,21 @@ public class QuestionController {
     private QuestionService questionService;
 
     /**
-     *  显示题库
-     * @param page
-     * @param entity
-     * @return
+     *  分页显示题库
+     * @param page 分页
+     * @param entity 查询关键字
+     * @return 题目信息
      */
     @GetMapping("/list")
     public Map<String, Object> listPage(Page<Question> page, QueryQuestionDto entity) {
         return  this.questionService.listPage(page, entity);
     }
 
+    /**
+     * 根据id查询题目信息
+     * @param id id
+     * @return 题目信息
+     */
     @GetMapping("/{id}")
     public QuestionVo getOne(@PathVariable Integer id) {
         return this.questionService.selectVoById(id);
@@ -53,24 +61,22 @@ public class QuestionController {
 
     /**
      * 删除试题
-     * @param id
-     * @return
+     * @param id id
+     * @return 成功信息
      */
     @PostMapping("/delete/{id}")
     public R delete(@PathVariable Integer id){
-        // 通过 id 移除试题
         this.questionService.removeById(id);
         return R.success();
     }
 
     /**
-     * 修改试题
-     * @param question
-     * @return
+     * 更新题目信息
+     * @param question 题目数据
+     * @return 成功信息
      */
     @PostMapping("/update")
     public R update(Question question){
-        // 修改试题
         this.questionService.updateById(question);
         return R.success();
     }
