@@ -1,9 +1,8 @@
 <script>
-
     $.post("/api/score/grade/chart/" + "${paper.id}" + "/" + "${gradeId}").done(function (json) {
         // 基于准备好的dom，初始化echarts实例
         const myChart = echarts.init(document.getElementById('main'), 'wonderland');
-        if (json.state === 'success') {
+        if (json.code === 200) {
             // 指定图表的配置项和数据
             const option = {
                 title: {
@@ -64,8 +63,4 @@
     }).fail(function () {
         toastr.error("服务器异常");
     });
-
-    function getOutput() {
-        window.location.href = "/api/paper/chart/analysis?paperId=${paper.id}&gradeId=${grade.id}";
-    }
 </script>

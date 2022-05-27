@@ -89,7 +89,7 @@ public class CourseController {
      * @return 课程信息
      */
     @GetMapping("/teacher/{teacherId}")
-    public List<Course> listByTeacherId(@PathVariable Integer teacherId) {
-        return this.courseService.listByTeacherId(teacherId);
+    public AjaxResponse listByTeacherId(@PathVariable Integer teacherId) {
+        return AjaxResponse.success(this.courseService.listByTeacherId(teacherId));
     }
 }

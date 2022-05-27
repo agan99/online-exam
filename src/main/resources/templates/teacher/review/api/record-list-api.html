@@ -16,7 +16,7 @@
     OesUtil.confirm("确定修改分数么", function () {
       let data = $("#update-form").serialize();
       $.post("/api/paper/update/score", data).done(function (data) {
-        if (data.state === "success") {
+        if (data.code === 200) {
           OesUtil.closeModal("#update-modal");
           window.location.reload();
         } else {

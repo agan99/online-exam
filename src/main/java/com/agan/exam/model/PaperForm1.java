@@ -41,6 +41,16 @@ public class PaperForm1 {
     private Integer qMulChoiceScore;
 
     /**
+     * 判断题数目
+     */
+    private Integer qTofNum;
+
+    /**
+     * 判断题分数
+     */
+    private Integer qTofScore;
+
+    /**
      * 填空题数目
      */
     private Integer qFillNum;
@@ -58,6 +68,6 @@ public class PaperForm1 {
     /**
      * 简答题分数
      */
-    private Integer qSaqScore;
+    private double qSaqScore;
 }
 

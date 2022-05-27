@@ -6,12 +6,9 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.agan.exam.base.PaperTemplate;
 import com.agan.exam.dao.PaperDAO;
-import com.agan.exam.dao.PaperFormDAO;
 import com.agan.exam.dao.StuAnswerRecordDAO;
-import com.agan.exam.dao.TypeDAO;
 import com.agan.exam.model.*;
 import com.agan.exam.model.dto.MarkInfoDto;
-import com.agan.exam.model.dto.PaperChartDto;
 import com.agan.exam.model.dto.QueryPaperDto;
 import com.agan.exam.server.GradeService;
 import com.agan.exam.server.PaperService;
@@ -24,11 +21,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,17 +30,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements PaperService {
 
-    private final TypeDAO typeDAO;
     private final PaperDAO paperDAO;
     private final ScoreService scoreService;
     private final StuAnswerRecordDAO stuAnswerRecordDAO;
-    private final PaperFormDAO paperFormDAO;
     private final QuestionService questionService;
     private final GradeService gradeService;
 
     /**
      * 教师批改试卷
-     *
      * @param stuId   学生ID
      * @param paperId 试卷ID
      * @param request request 对象.
@@ -58,15 +49,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
         Paper paper = paperDAO.selectById(paperId);
         // 试卷名称
         String paperName = paper.getPaperName();
+
         // 通过 ID 获取试卷模板信息
-        PaperForm paperForm = paperFormDAO.selectById(paper.getPaperFormId());
+        PaperForm1 paperForm = new PaperTemplate().PaperTemplate01();
         // 获取模板各个题型的题目分值
-        int choiceScore = NumberUtil.strToInteger(paperForm.getQChoiceScore());
-        int mulChoiceScore = NumberUtil.strToInteger(paperForm.getQMulChoiceScore());
-        int tofScore = NumberUtil.strToInteger(paperForm.getQTofScore());
-        int fillScore = NumberUtil.strToInteger(paperForm.getQFillScore());
-        double saqScore = NumberUtil.strToDouble(paperForm.getQSaqScore());
-        double programScore = NumberUtil.strToDouble(paperForm.getQProgramScore());
+        int choiceScore = paperForm.getQChoiceScore();
+        int mulChoiceScore = paperForm.getQMulChoiceScore();
+        int tofScore = paperForm.getQTofScore();
+        int fillScore = paperForm.getQFillScore();
+        double saqScore = paperForm.getQSaqScore();
 
         // 错题集
         List<String> wrongIds = new ArrayList<>();
@@ -121,12 +112,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
                             record.setPaperId(paperId).setStuId(stuId);
                             stuAnswerRecordDAO.insert(record);
                         }
-                        break;
-                    default:
-                        // 编程题批改
-                        MarkInfoDto programMark = PaperMarkUtil.essayMark(questionList, programScore, request);
-                        score += programMark.getScore();
-                        wrongIds.addAll(programMark.getWrongIds());
                         break;
                 }
             }
@@ -228,12 +213,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
                 List<StuAnswerRecord> ans = this.stuAnswerRecordDAO.selectList(ansQw);
                 // 遍历删除答题记录
                 ans.forEach(an -> stuAnswerRecordDAO.deleteById(an.getId()));
-                // 获取试卷模板，如果只有他使用，则进行删除
-                int paperFormId = paper.getPaperFormId();
-                // 排除默认模板，且如果数量等于 1，说明只有本考试使用，直接删除
-                if (paperFormId != 1 && this.countPaperByPaperFormId(paperFormId) == 1) {
-                    this.paperFormDAO.deleteById(paperFormId);
-                }
             }
         }
         return paperDAO.deleteById(id);
@@ -356,7 +335,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
     }
 
     /**
-     * 根据老师Id查找已结束试卷
+     * 根据 教师Id 查找已结束试卷
      * @param teacherId 教师ID
      * @return 该教师所属已完成的试卷
      */

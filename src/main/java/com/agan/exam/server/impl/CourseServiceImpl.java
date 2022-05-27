@@ -79,7 +79,7 @@ public class CourseServiceImpl extends ServiceImpl<CourseDAO, Course> implements
     }
 
     /**
-     * 查询一个老师所教的所有课程
+     * 根据 教师id 查询所教课程
      * @param teacherId 教师ID
      * @return 课程集合
      */

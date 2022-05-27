@@ -106,7 +106,6 @@ public class Paper {
 
   /**
    * 判断开始时间是否在当前时间之后
-   *
    * @return true 是的 试卷已经开始 false 否 试卷未开始
    */
   public boolean isStart() {
@@ -121,7 +120,6 @@ public class Paper {
 
   /**
    * 判断结束时间是否在当前时间之后
-   *
    * @return true 是的 试卷已经结束 false 否 试卷未结束
    */
   public boolean isEnd() {

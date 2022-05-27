@@ -284,36 +284,9 @@
               </div>
               <br>
               <%}%>
-
-              <!--编程题-->
-              <%if(isNotEmpty(qProgramList)){%>
-              <div class="col-12 table-responsive">
-                <div class="invoice-title">
-                  <div class="invoice-col">
-                    <h4>简答题</h4>
-                    <hr>
-                  </div>
-                </div>
-                <dl>
-                  <%for(question in qProgramList){%>
-                  <dt style="font-size: 17px">${questionLP.index}. ${question.questionName}</dt>
-                  <dd></dd>
-                  <dd>
-                    <label><strong style="color: limegreen">正确答案：</strong></label>
-                    <textarea rows="6" class="form-control" disabled>${question.answer}</textarea>
-                  </dd>
-                  <dd>
-                    <label>解析：</label>
-                    <textarea rows="3" class="form-control" disabled>${question.remark}</textarea>
-                  </dd>
-                  <hr>
-                  <%}%>
-                </dl>
-              </div>
-              <%}%>
             </div>
           </div>
-        </div><!-- /.row -->
+        </div>
       </div>
     </section>
     <!-- 接口 -->
@@ -322,7 +295,6 @@
   </div>
 
   <aside class="control-sidebar control-sidebar-dark">
-    <!-- 控制侧边栏内容在这里  -->
   </aside>
 </div>
 </body>

@@ -1,9 +1,6 @@
 package com.agan.exam.model.vo;
 
-import com.agan.exam.model.Course;
-import com.agan.exam.model.Question;
-import com.agan.exam.model.Teacher;
-import com.agan.exam.model.Type;
+import com.agan.exam.model.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +10,7 @@ public class QuestionVo extends Question {
 
   private Course course;
 
-  private Type type;
+  private QuestionType questionType;
 
   private Teacher teacher;
 }

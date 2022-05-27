@@ -30,7 +30,6 @@ public class TeacherModuleController {
     private final PaperService paperService;
     private final CourseService courseService;
     private final MajorService majorService;
-    private final PaperFormService paperFormService;
     private final StuAnswerRecordService stuAnswerRecordService;
     private final QuestionService questionService;
     private final GradeService gradeService;
@@ -104,8 +103,7 @@ public class TeacherModuleController {
      */
     @GetMapping("/paper/show/{id}")
     public ModelAndView show(@PathVariable Integer id, ModelAndView mv) {
-        String[] names = {"qChoiceList", "qMulChoiceList", "qTofList", "qFillList", "qSaqList",
-                "qProgramList"};
+        String[] names = {"qChoiceList", "qMulChoiceList", "qTofList", "qFillList", "qSaqList"};
         // 根据 试卷ID 获取试卷的详细信息
         Paper paper = paperService.getById(id);
         if (paper == null) {
@@ -115,8 +113,8 @@ public class TeacherModuleController {
         mv.addObject("paper", paper);
         mv.addObject("course", courseService.getById(paper.getCourseId()));
         mv.addObject("major", majorService.getById(paper.getMajorId()));
-        // 获取六种题型的题目信息列表
-        for (int i = 0; i < 6 ; i++) {
+        // 获取五种题型的题目信息列表
+        for (int i = 0; i < 5 ; i++) {
             List<Question> questions = questionService.selectByPaperIdAndType(id, i+1);
             mv.addObject(names[i], questions);
         }
@@ -129,18 +127,7 @@ public class TeacherModuleController {
     }
 
     /**
-     * 转发到随机新增试卷模板页面
-     * @return 新的试卷模板页面
-     */
-    @GetMapping("/paperForm/save")
-    public String savePaperForm() {
-        return ServletUtil.isAjax()
-                ? "/teacher/paper/save-paper-form#paperFormTable"
-                : "/teacher/paper/save-paper-form";
-    }
-
-    /**
-     * 添加试卷（组卷页面）
+     * 智能组卷页面
      * @param id 试卷模板 ID
      * @param mv ModelAndView 对象
      * @return 组卷页面
@@ -153,24 +140,6 @@ public class TeacherModuleController {
             mv.setViewName("/teacher/paper/save-paper#savePaperTable");
         } else {
             mv.setViewName("/teacher/paper/save-paper");
-        }
-        return mv;
-    }
-
-    /**
-     * 展示所有试卷模版列表
-     *
-     * @param mv ModelAndView 对象
-     * @return 试卷模板页面
-     */
-    @GetMapping("/paperForm")
-    public ModelAndView showPaperForm(ModelAndView mv) {
-        // 调用获取试卷模板集合接口
-        mv.addObject("formList", this.paperFormService.list());
-        if (ServletUtil.isAjax()) {
-            mv.setViewName("/teacher/paper/paper-form-list#paperFormTable");
-        } else {
-            mv.setViewName("/teacher/paper/paper-form-list");
         }
         return mv;
     }
@@ -196,7 +165,6 @@ public class TeacherModuleController {
 
     /**
      * 复查某场考试的试卷
-     *
      * @param paperId 试卷ID
      * @param mv      ModelAndView 对象
      * @return 待复查试卷信息

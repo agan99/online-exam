@@ -5,13 +5,16 @@ import com.agan.exam.dao.PaperDAO;
 import com.agan.exam.dao.ScoreDAO;
 import com.agan.exam.dao.StudentDAO;
 import com.agan.exam.model.Score;
+import com.agan.exam.model.dto.AnswerEditDto;
 import com.agan.exam.server.ScoreService;
 import com.agan.exam.util.PageUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -136,6 +139,28 @@ public class ScoreServiceImpl extends ServiceImpl<ScoreDAO, Score> implements Sc
             }
         }
         return resultMap;
+    }
+
+    /**
+     * 根据学生ID和试卷ID修改成绩
+     * @param dto 修改的信息
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateScoreByStuIdAndPaperId(AnswerEditDto dto) {
+        // 获取改门成绩的信息
+        LambdaQueryWrapper<Score> qw = new LambdaQueryWrapper<>();
+        qw.eq(Score::getStuId, dto.getStuId()).eq(Score::getPaperId, dto.getPaperId());
+        Score res = this.scoreDAO.selectOne(qw);
+        // 更新成绩
+        LambdaUpdateWrapper<Score> uw = new LambdaUpdateWrapper<>();
+        uw.eq(Score::getStuId, dto.getStuId()).eq(Score::getPaperId, dto.getPaperId());
+        // 新的总成绩
+        int score = Integer.parseInt(res.getScore()) - dto.getOldScore() + dto.getNewScore();
+        // 构造条件（学生ID+试卷ID）更新 SQL
+        uw.set(Score::getScore, score);
+        uw.eq(Score::getStuId, dto.getStuId()).eq(Score::getPaperId, dto.getPaperId());
+        this.scoreDAO.update(null, uw);
     }
 
 }

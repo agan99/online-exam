@@ -1,5 +1,6 @@
 package com.agan.exam.controller.rest;
 
+import com.agan.exam.base.AjaxResponse;
 import com.agan.exam.base.R;
 import com.agan.exam.model.Score;
 import com.agan.exam.model.vo.StudentVo;
@@ -21,7 +22,6 @@ public class ScoreController {
 
     /**
      * 获取学生乘机分业数据
-     *
      * @return 获取学生乘机分业数据
      */
     @GetMapping("/list")
@@ -30,8 +30,14 @@ public class ScoreController {
         return this.scoreService.pageByStuId(page, 1);
     }
 
+    /**
+     * 获取班级分数分布情况
+     * @param paperId 试卷id
+     * @param gradeId 年级id
+     * @return 分数分布情况
+     */
     @PostMapping("/grade/chart/{paperId}/{gradeId}")
-    public R gradeChart(@PathVariable Integer paperId, @PathVariable Integer gradeId) {
-        return R.successWithData(scoreService.averageGradeScore(paperId, gradeId));
+    public AjaxResponse gradeChart(@PathVariable Integer paperId, @PathVariable Integer gradeId) {
+        return AjaxResponse.success(scoreService.averageGradeScore(paperId, gradeId));
     }
 }

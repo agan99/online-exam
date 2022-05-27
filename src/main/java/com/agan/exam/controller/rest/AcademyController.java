@@ -21,8 +21,7 @@ public class AcademyController {
     private AcademyService academyService;
 
     /**
-     * Rest 获取学院集合
-     *
+     * 返回学院集合信息
      * @return 学院集合
      */
     @GetMapping

@@ -1,6 +1,6 @@
 <script>
     // 初始化表单
-    OesUtil.initTable('#courseInfo', "/api/course/listByPage?teacherId=" + '1',
+    OesUtil.initTable('#courseInfo', "/api/course/listByPage?teacherId=" + '${session.teacherId}',
         "get", [{
             title: '序号',
             field: 'id',

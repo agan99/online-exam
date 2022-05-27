@@ -7,6 +7,7 @@ import com.agan.exam.model.vo.QuestionVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,6 @@ public interface QuestionService  extends IService<Question> {
 
     /**
      * 通过试卷答题记录查询问题的正确答案集合
-     *
      * @param entity 答题记录数据传输对象
      * @return 题目集合
      */
@@ -52,4 +52,21 @@ public interface QuestionService  extends IService<Question> {
      * @return 问题集合
      */
     List<Question> listByTypeIdAndCourseId(Integer typeId, Integer courseId);
+
+    /**
+     * 导入题目
+     * @param multipartFile multipartFile 对象
+     */
+    void importQuestion(MultipartFile multipartFile);
+
+    /**
+     * 通过题目名称查询题目列表
+     * @param questionName 题目名称
+     * @param courseId     课程ID
+     * @param typeId       题目类型ID
+     * @return 题目列表
+     */
+    List<Question> listByQuestionNameAndCourseIdAndTypeId(
+            String questionName, Integer courseId, Integer typeId);
+
 }

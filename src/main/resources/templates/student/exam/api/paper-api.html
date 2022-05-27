@@ -22,8 +22,8 @@
   }
 
   // 初始化表单
-  OesUtil.initNormalTable('#paperInfo',
-            "/api/paper/list?paperType=正式&majorId=${session.student.majorId}&level=${session.student.level}", "get", [{
+  OesUtil.initTable('#paperInfo',
+            "/api/paper/listByPage?paperType=正式&majorId=${session.student.majorId}&level=${session.student.level}", "get", [{
             title: '考试',
             field: 'paperName',
             sortable: false

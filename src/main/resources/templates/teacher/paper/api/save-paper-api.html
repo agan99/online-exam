@@ -1,14 +1,11 @@
 <script>
-
   // ------------------------------ 获取课程集合 ------------------------------
   $.get("/api/course/teacher/" + "${session.teacher.id}").done(function (data) {
     let options = "";
-    // 移除元素的所有子节点和内容
     $('#courseId').empty();
     options += "<option value=''>请选择</option>";
-    // 添加课程名称
-    $.each(data, function (index, e) {
-      options += "<option selected='true' value=" + e.id + ">" + e.courseName + "</option>";
+    $.each(data.data, function (index, e) {
+        options += "<option selected='true' value=" + e.id + ">" + e.courseName + "</option>";
     });
     $("#courseId").append(options).select2({theme: 'bootstrap4', width: '100%'});
   });
@@ -16,11 +13,9 @@
   // ------------------------------ 获取学院集合 ------------------------------
   $.get("/api/academy").done(function (data) {
     let options = "";
-    // 移除元素的所有子节点和内容
     $('#academy').empty();
     options += "<option value=''>请选择</option>";
-    // 添加学院名称
-    $.each(data, function (index, e) {
+    $.each(data.data, function (index, e) {
       options += "<option value=" + e.id + ">" + e.name + "</option>";
     });
     $("#academy").append(options).val('').select2({theme: 'bootstrap4', width: '100%'});
@@ -31,11 +26,9 @@
     // 获取学院集合
     $.get("/api/major/academy/" + id).done(function (data) {
       let options = "";
-        // 移除元素的所有子节点和内容
       $('#majorId').empty();
       options += "<option value=''>请选择</option>";
-      // 添加专业名称
-      $.each(data, function (index, e) {
+      $.each(data.data, function (index, e) {
         options += "<option value=" + e.id + ">" + e.major + "</option>";
       });
       $("#majorId").append(options).val('').select2({theme: 'bootstrap4', width: '100%'});
@@ -57,7 +50,7 @@
     OesUtil.confirm("确定添加试卷吗？", function () {
       let data = $("#addForm").serialize();
       $.post("/api/paper/save/random", data, function (data) {
-        if (data.state === "success") {
+        if (data.code === 200) {
           OesUtil.ajaxPage("paper", "/teacher/paper/show/" + data.data);
         } else {
           toastr.error(data.message);
@@ -65,5 +58,4 @@
       })
     })
   }
-
 </script>

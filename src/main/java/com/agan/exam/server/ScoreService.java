@@ -1,6 +1,7 @@
 package com.agan.exam.server;
 
 import com.agan.exam.model.Score;
+import com.agan.exam.model.dto.AnswerEditDto;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -48,12 +49,15 @@ public interface ScoreService extends IService<Score> {
 
     /**
      * 统计该班级某门考试的平均分
-     *
      * @param gradeId 班级ID
      * @param paperId 试卷ID
      * @return Map<String, Object>
      */
     Map<String, Object> averageGradeScore(Integer paperId, Integer gradeId);
 
-
+    /**
+     * 根据学生ID和试卷ID修改成绩
+     * @param entity 修改的信息
+     */
+    void updateScoreByStuIdAndPaperId(AnswerEditDto entity);
 }

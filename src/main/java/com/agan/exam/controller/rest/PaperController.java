@@ -3,9 +3,13 @@ package com.agan.exam.controller.rest;
 import com.agan.exam.base.AjaxResponse;
 import com.agan.exam.base.R;
 import com.agan.exam.model.Paper;
+import com.agan.exam.model.StuAnswerRecord;
 import com.agan.exam.model.Teacher;
+import com.agan.exam.model.dto.AnswerEditDto;
 import com.agan.exam.model.dto.QueryPaperDto;
 import com.agan.exam.server.PaperService;
+import com.agan.exam.server.ScoreService;
+import com.agan.exam.server.StuAnswerRecordService;
 import com.agan.exam.util.HttpUtil;
 import com.agan.exam.util.SysConsts;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,7 +23,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/api/paper")
 public class PaperController {
-
+    private final ScoreService scoreService;
+    private final StuAnswerRecordService stuAnswerRecordService;
     private final PaperService paperService;
 
     /**
@@ -71,7 +76,7 @@ public class PaperController {
      * @return 组卷页面
      */
     @PostMapping("/save/random")
-    public R add(@Valid Paper paper, Integer paperFormId, String difficulty) {
+    public AjaxResponse add(@Valid Paper paper, Integer paperFormId, String difficulty) {
         // 设置试卷模板 ID
         paper.setPaperFormId(paperFormId);
         // 获取教师 ID
@@ -82,6 +87,26 @@ public class PaperController {
         paper.setAcademyId(teacher.getAcademyId());
         // 调用根据难度来智能组卷接口
         paperService.randomNewPaper(paper, difficulty);
-        return R.successWithData(paper.getId());
+        return AjaxResponse.success(paper.getId());
     }
+
+    /**
+     * 修改主观题成绩
+     * @param dto 信息
+     */
+    @PostMapping("/update/score")
+    public AjaxResponse editScore(@Valid AnswerEditDto dto) {
+        // 修改该题得分
+        StuAnswerRecord record = new StuAnswerRecord();
+        record.setId(dto.getId()).setScore(dto.getNewScore());
+        this.stuAnswerRecordService.updateById(record);
+        // 修改总分
+        StuAnswerRecord stuRec = this.stuAnswerRecordService.getById(dto.getId());
+        // 封装参数
+        dto.setStuId(stuRec.getStuId());
+        dto.setPaperId(stuRec.getPaperId());
+        this.scoreService.updateScoreByStuIdAndPaperId(dto);
+        return AjaxResponse.success();
+    }
+
 }

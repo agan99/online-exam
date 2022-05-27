@@ -11,6 +11,7 @@ public class PaperTemplate {
         return new PaperForm1(1,
                 6,5,
                 2,10,
+                0,0,
                 2,5,
                 2,20);
     };
