@@ -155,7 +155,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
 
     /**
      * 分页查询试卷信息
-     *
      * @param page   分页信息
      * @param entity 模糊搜索条件
      * @return 分页结果集
@@ -167,16 +166,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
         // 试卷类型
         if (StrUtil.isNotBlank(entity.getPaperType())) {
             qw.eq(Paper::getPaperType, entity.getPaperType());
-        }
-
-        // 所属专业
-        if (entity.getMajorId() != null) {
-            qw.eq(Paper::getMajorId, entity.getMajorId());
-        }
-
-        // 所属学院
-        if (entity.getAcademyId() != null) {
-            qw.eq(Paper::getAcademyId, entity.getAcademyId());
         }
 
         // 出卷老师
@@ -194,11 +183,6 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
             qw.like(Paper::getPaperName, entity.getPaperName());
         }
 
-        // 试卷年级
-        if (entity.getLevel() != null) {
-            qw.eq(Paper::getLevel, entity.getLevel());
-        }
-
         Page<Paper> pageInfo = this.paperDAO.selectPage(page, qw);
         // 班级不为空，数据也不为0
         if (entity.getGradeId() != null && pageInfo.getTotal() != 0L) {
@@ -214,16 +198,15 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
                 }
             }
         }
-        return PageUtil.toPage(pageInfo);
+        return PageUtil.toPageList(pageInfo);
     }
 
     /**
      * 删除试卷
-     *
      * @param id 试卷ID
      */
     @Override
-    public void deletePaperById(Integer id) {
+    public int deletePaperById(Integer id) {
         // 查询试卷是否存在
         Paper paper = this.paperDAO.selectById(id);
         if (paper != null) {
@@ -252,10 +235,8 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
                     this.paperFormDAO.deleteById(paperFormId);
                 }
             }
-
-            // 删除试卷
-            paperDAO.deleteById(id);
         }
+        return paperDAO.deleteById(id);
     }
 
     /**
@@ -351,11 +332,10 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
 
     /**
      * 更新试卷指派班级
-     *
      * @param paper 试卷信息
      */
     @Override
-    public void updateGradeIds(Paper paper) {
+    public int updateGradeIds(Paper paper) {
         if (paper.getLevel() == null || StrUtil.isBlank(paper.getGradeIds())) {
             throw new ServiceException("请填写年级和班级信息");
         }
@@ -372,7 +352,7 @@ public class PaperServiceImpl extends ServiceImpl<PaperDAO, Paper> implements Pa
                 throw new ServiceException("班级" + gId + "不存在");
             }
         }
-        this.paperDAO.updateById(paper);
+        return this.paperDAO.updateById(paper);
     }
 
     /**

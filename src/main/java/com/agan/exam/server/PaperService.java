@@ -31,7 +31,7 @@ public interface PaperService extends IService<Paper> {
    * 删除试卷
    * @param id 试卷ID
    */
-  void deletePaperById(Integer id);
+  int deletePaperById(Integer id);
 
   /**
    * 通过试卷模板 ID 查询试卷数量
@@ -51,7 +51,7 @@ public interface PaperService extends IService<Paper> {
    * 更新试卷指派班级
    * @param paper 试卷信息
    */
-  void updateGradeIds(Paper paper);
+  int updateGradeIds(Paper paper);
 
   /**
    * 根据老师Id查找已结束试卷

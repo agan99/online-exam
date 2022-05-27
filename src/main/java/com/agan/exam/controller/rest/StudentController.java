@@ -1,5 +1,6 @@
 package com.agan.exam.controller.rest;
 
+import com.agan.exam.base.AjaxResponse;
 import com.agan.exam.base.R;
 import com.agan.exam.model.Student;
 import com.agan.exam.model.dto.ChangePassDto;
@@ -17,13 +18,15 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Map;
 
+/**
+ * 学生管理 api
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/student")
 public class StudentController {
 
     private final StudentService studentService;
-
 
     /**
      * 学生登录 验证学号和密码
@@ -44,60 +47,6 @@ public class StudentController {
     }
 
     /**
-     * 分页返回学生信息
-     * @param page 分页信息
-     * @param key 查询关键字
-     * @return 学生信息
-     */
-    @GetMapping("/list")
-    public Map<String, Object> listPage(Page<Student> page, QueryStudentDto key){
-        return this.studentService.listPage(page, key);
-    }
-
-    /**
-     * 获取单个学生信息
-     * @param id 学生id
-     * @return 学生信息
-     */
-    @GetMapping("/{id}")
-    public StudentVo getOneStudent(@PathVariable Integer id){
-        return this.studentService.selectVoById(id);
-    }
-
-    /**
-     * 增加学生
-     * @param student 学生信息
-     * @return 成功消息
-     */
-    @PostMapping("/save")
-    public R saveStudent(@Valid Student student){
-        this.studentService.save(student);
-        return R.success();
-    }
-
-    /**
-     * 删除学生
-     * @param id 学生ID
-     * @return 成功信息
-     */
-    @PostMapping("/delete/{id}")
-    public R deleteStudent(@PathVariable Integer id) {
-        this.studentService.removeById(id);
-        return R.success();
-    }
-
-    /**
-     * 更新学生
-     * @param student 学生信息
-     * @return 成功信息
-     */
-    @PostMapping("/update")
-    public R updateStudent(Student student) {
-        this.studentService.updateById(student);
-        return R.success();
-    }
-
-    /**
      * 密码修改
      * @param dto 密码信息
      * @return 重定向到登录界面
@@ -113,5 +62,56 @@ public class StudentController {
         session.removeAttribute(SysConsts.Session.STUDENT_ID);
         session.removeAttribute(SysConsts.Session.STUDENT);
         return R.success();
+    }
+
+    /**
+     * 分页返回学生信息
+     * @param page 分页信息
+     * @param key 查询关键字
+     * @return 学生信息
+     */
+    @GetMapping("/listByPage")
+    public AjaxResponse listPage(Page<Student> page, QueryStudentDto key){
+        return AjaxResponse.success(this.studentService.listPage(page, key));
+    }
+
+    /**
+     * 获取单个学生信息
+     * @param id 学生id
+     * @return 学生信息
+     */
+    @GetMapping("/{id}")
+    public AjaxResponse getOneStudent(@PathVariable Integer id){
+        return AjaxResponse.success(this.studentService.selectVoById(id));
+    }
+
+    /**
+     * 增加学生
+     * @param student 学生信息
+     * @return 成功消息
+     */
+    @PostMapping("/save")
+    public AjaxResponse saveStudent(@Valid Student student){
+        return AjaxResponse.success(this.studentService.save(student));
+    }
+
+    /**
+     * 删除学生
+     * @param id 学生ID
+     * @return 成功信息
+     */
+    @PostMapping("/delete/{id}")
+    public AjaxResponse deleteStudent(@PathVariable Integer id) {
+        return AjaxResponse.success(this.studentService.removeById(id));
+    }
+
+    /**
+     * 更新学生
+     * @param student 学生信息
+     * @return 成功信息
+     */
+    @PostMapping("/update")
+    public AjaxResponse updateStudent(Student student) {
+        return AjaxResponse.success(this.studentService.updateById(student));
     }
 }

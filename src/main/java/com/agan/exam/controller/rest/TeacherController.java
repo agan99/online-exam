@@ -1,5 +1,6 @@
 package com.agan.exam.controller.rest;
 
+import com.agan.exam.base.AjaxResponse;
 import com.agan.exam.base.R;
 import com.agan.exam.model.Teacher;
 import com.agan.exam.model.dto.ChangePassDto;
@@ -16,6 +17,9 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Map;
 
+/**
+ * 教师管理 api
+ */
 @RestController
 @RequestMapping("/api/teacher")
 public class TeacherController {
@@ -79,19 +83,9 @@ public class TeacherController {
      * @param entity 查询实体
      * @return 分页信息结果集
      */
-    @GetMapping("/list")
-    public Map<String, Object> page(Page<Teacher> page, QueryTeacherDto entity) {
-        return this.teacherService.listPage(page, entity);
-    }
-
-    /**
-     * 获取单个老师信息
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    public Teacher getOne(@PathVariable Integer id){
-        return this.teacherService.getById(id);
+    @GetMapping("/listByPage")
+    public AjaxResponse page(Page<Teacher> page, QueryTeacherDto entity) {
+        return AjaxResponse.success(this.teacherService.listPage(page, entity));
     }
 
     /**
@@ -100,12 +94,19 @@ public class TeacherController {
      * @return 成功信息
      */
     @PostMapping("/save")
-    public R saveTeacher(@Valid Teacher teacher) {
-        // 调用教师信息新增接口
-        this.teacherService.save(teacher);
-        return R.success();
+    public AjaxResponse saveTeacher(@Valid Teacher teacher) {
+        return AjaxResponse.success(this.teacherService.save(teacher));
     }
 
+    /**
+     * 根据id获取教师信息
+     * @param id 教师id
+     * @return 教师信息
+     */
+    @GetMapping("/{id}")
+    public AjaxResponse getOne(@PathVariable Integer id){
+        return AjaxResponse.success(this.teacherService.getById(id));
+    }
 
     /**
      * 更新教师信息
@@ -113,10 +114,8 @@ public class TeacherController {
      * @return 成功信息
      */
     @PostMapping("/update")
-    public R updateTeacher(Teacher teacher) {
-        // 通过ID关系教师信息
-        this.teacherService.updateById(teacher);
-        return R.success();
+    public AjaxResponse updateTeacher(Teacher teacher) {
+        return AjaxResponse.success(this.teacherService.updateById(teacher));
     }
 
     /**
@@ -125,9 +124,8 @@ public class TeacherController {
      * @return 回调信息
      */
     @PostMapping("/delete/{id}")
-    public R deleteTeacher(@PathVariable Integer id) {
-        this.teacherService.removeById(id);
-        return R.success();
+    public AjaxResponse deleteTeacher(@PathVariable Integer id) {
+        return AjaxResponse.success(this.teacherService.removeById(id));
     }
 
 }

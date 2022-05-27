@@ -13,8 +13,8 @@ public interface StudentService  extends IService<Student> {
 
     /**
      * 分页查询学生
-     * @param page
-     * @return
+     * @param page 分页信息
+     * @return 学生信息
      */
     Map<String, Object> listPage(Page<Student> page, QueryStudentDto entity);
 

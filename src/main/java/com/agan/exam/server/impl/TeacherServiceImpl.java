@@ -37,9 +37,7 @@ public class TeacherServiceImpl extends ServiceImpl<TeacherDAO, Teacher> impleme
             // 根据教师姓名或者工号来进行模糊查询
             qw.like(Teacher::getName, entity.getKey()).or().like(Teacher::getWorkNumber, entity.getKey());
         }
-        // 接收查询结果
-        Page<Teacher> pageInfo = this.teacherDAO.selectPage(page, qw);
-        return PageUtil.toPage(pageInfo);
+        return PageUtil.toPageList(this.teacherDAO.selectPage(page, qw));
     }
 
     /**

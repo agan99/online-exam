@@ -15,9 +15,6 @@ import lombok.NoArgsConstructor;
 
 /**
  * 试卷实体类
- *
- * @author chachae
- * @date 2020/1/18
  */
 @Data
 @Builder

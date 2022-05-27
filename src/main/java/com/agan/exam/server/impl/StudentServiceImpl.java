@@ -27,13 +27,12 @@ public class StudentServiceImpl extends ServiceImpl<StudentDAO, Student> impleme
 
     /**
      * 分页查询学生
-     * @param page
-     * @return
+     * @param page 分页信息
+     * @return 学生信息
      */
     @Override
     public Map<String, Object> listPage(Page<Student> page, QueryStudentDto entity) {
-        IPage<StudentVo> pageInfo = this.studentDAO.pageVo(page, entity);
-        return PageUtil.toPage(pageInfo);
+        return PageUtil.toPageList(this.studentDAO.pageVo(page, entity));
     }
 
     /**

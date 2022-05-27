@@ -1,63 +1,30 @@
 <script>
-
-    // 操作按钮行为
-    function operateFormatter(value, row, index) {
-        return ['<button class="btn btn-success btn-sm" onclick="goUpdate(' + row.id
-        + ')">编辑</button>&nbsp;' +
-        '<button class="btn btn-danger btn-sm" onclick="deleteStudent(' + row.id + ')">删除</button>' +
-        '']
-            .join('');
-    }
-
-    // 模糊搜索参数
-    function params(params) {
-        return {
-            current: params.pageNumber,
-            size: params.pageSize,
-            academyId: $('#findAcademy').val(),
-            key: $("#findKey").val()
-        };
-    }
-
-    // 初始化表单
-    OesUtil.initQueryTable('#studentInfo', "/api/student/list", "get", [{
-            title: '序号',
-            field: 'id',
-            sortable: false,
+    // -------------------------- 表单初始化 --------------------------------
+    OesUtil.queryTable('#studentInfo', "/api/student/listByPage", "get", [
+        {title: '序号', field: 'id', sortable: false,
             formatter: function (value, row, index) {
                 return index + 1;
-            }
-        }, {
-            title: '姓名',
-            field: 'name',
-            sortable: true
-        }, {
-            title: '学号',
-            field: 'stuNumber',
-            sortable: true
-        }, {
-            title: '年级',
-            field: 'level',
-            sortable: true
-        }, {
-            title: '所属学院',
-            field: 'academy.name',
-            sortable: true
-        }, {
-            title: '专业',
-            field: 'major.major',
-            sortable: true
-        }, {
-            title: '性别',
-            field: 'sex',
-            sortable: false
-        }, {
-            field: 'operate',
-            title: '操作',
-            formatter: operateFormatter
-        }],
-        params
-    );
+        }},
+        {title: '姓名', field: 'name', sortable: true},
+        {title: '学号', field: 'stuNumber', sortable: true},
+        {title: '年级', field: 'level', sortable: true},
+        {title: '所属学院', field: 'academy.name', sortable: true},
+        {title: '专业', field: 'major.major', sortable: true},
+        {title: '性别', field: 'sex', sortable: false},
+        {field: 'operate', title: '操作', formatter:  function (value, row, index) {
+                return ['<button class="btn btn-success btn-sm" ' +
+                'onclick="goUpdate(' + row.id + ')">编辑</button>&nbsp;' +
+                '<button class="btn btn-danger btn-sm" ' +
+                'onclick="deleteStudent(' + row.id + ')">删除</button>' + ''].join('');
+        }}],
+        function (params) {
+            return {
+                current: params.pageNumber,
+                size: params.pageSize,
+                academyId: $('#findAcademy').val(),
+                key: $("#findKey").val()
+            };
+        });
 
     // 分学院搜索
     $("#findAcademy").change(function () {
@@ -67,11 +34,11 @@
     // 专业名称模糊搜索
     OesUtil.bindRequest('#findKey', '#studentInfo', 200);
 
-    // 删除学生
+    // -------------------------- 删除学生 --------------------------------
     function deleteStudent(id) {
         OesUtil.confirm("确定删除学生吗?", function () {
             $.post("/api/student/delete/" + id).done(function (data) {
-                if (data.state === "success") {
+                if (data.code === 200) {
                     OesUtil.refreshTable('#studentInfo');
                 } else {
                     toastr.error(data.message);
@@ -85,7 +52,7 @@
         let options = "";
         $('.academySelect').empty();
         options+="<option value=''>" + "全部" + "</option>";
-        $.each(data, function (index, e) {
+        $.each(data.data, function (index, e) {
             options += "<option value=" + e.id + ">" + e.name + "</option>";
         });
         $(".academySelect").append(options).val('').select2({theme: 'bootstrap4'});
@@ -94,19 +61,15 @@
     // 获取学生信息
     function goUpdate(id) {
         $.get("/api/student/" + id, function (data) {
-            // 赋值
-            $('#id').val(data.id);
-            $('#name').val(data.name);
-            $('#stuNumber').val(data.stuNumber);
-            $('#level').val(data.level);
-            $('#sex').val(data.sex).select2({theme: 'bootstrap4'});
-            $('#academyId').val(data.academy.id).select2({theme: 'bootstrap4'});
-            getMajor(data.academy.id, data.major.id);
+            $('#id').val(data.data.id);
+            $('#name').val(data.data.name);
+            $('#stuNumber').val(data.data.stuNumber);
+            $('#level').val(data.data.level);
+            $('#sex').val(data.data.sex).select2({theme: 'bootstrap4'});
+            $('#academyId').val(data.data.academy.id).select2({theme: 'bootstrap4'});
+            getMajor(data.data.academy.id, data.data.major.id);
             // 启动修改模态框
-            $("#update-modal").modal({
-                show: true,
-                backdrop: 'static'
-            });
+            $("#update-modal").modal({show: true, backdrop: 'static'});
         })
     }
 
@@ -115,10 +78,9 @@
         // 获取学院集合
         $.get("/api/major/academy/" + id).done(function (data) {
             let options = "";
-            //回填的二级类别值
             $(".majorSelect").empty();
             options += "<option value=''>请选择</option>";
-            $.each(data, function (index, e) {
+            $.each(data.data, function (index, e) {
                 options += "<option value=" + e.id + ">" + e.major + "</option>";
             });
             $(".majorSelect").append(options).val(majorId).select2({theme: 'bootstrap4'});
@@ -127,11 +89,11 @@
 
     // 年级择框框回填
     function getGrade(level) {
-        $.get("/api/grade/list?level=" + level+"&majorId="+$(".majorSelect").val()).done(function (data) {
+        $.get("/api/grade/listByPage?level=" + level+"&majorId="+$(".majorSelect").val()).done(function (data) {
             let options = "";
             $(".gradeSelect").empty();
             options += "<option value=''>请选择</option>";
-            $.each(data.list, function (index, e) {
+            $.each(data.data.rows, function (index, e) {
                 options += "<option value=" + e.id + ">" + e.gradeName + "</option>";
             });
             $(".gradeSelect").append(options).select2({theme: 'bootstrap4'});
@@ -140,10 +102,10 @@
 
     // 修改修生信息请求
     $("#updateBtn").click(function () {
-        OesUtil.confirm("确定增加学生吗?", function () {
+        OesUtil.confirm("确定修改学生吗?", function () {
             let data = $('#update-form').serialize();
             $.post("/api/student/update", data).done(function (data) {
-                if (data.state === "success") {
+                if (data.code === 200) {
                     OesUtil.closeModal("#update-modal");
                     $('#update-form')[0].reset();
                     OesUtil.refreshTable("#studentInfo");
@@ -154,13 +116,9 @@
         })
     });
 
-    // 启动新增模态框
+    // -------------------------- 新增学生 --------------------------------
     function goSave() {
-        $("#save-modal").modal({
-            show: true,
-            backdrop: 'static'
-        });
-        // select2 选择框
+        $("#save-modal").modal({show: true, backdrop: 'static'});
         $('.save-sex').select2({theme: 'bootstrap4'});
         $('.save-level').select2({theme: 'bootstrap4'});
     }
@@ -170,7 +128,7 @@
         OesUtil.confirm("确定增加学生吗?", function () {
             let data = $('#save-form').serialize();
             $.post("/api/student/save", data).done(function (data) {
-                if (data.state === "success") {
+                if (data.code === 200) {
                     OesUtil.closeModal("#save-modal");
                     $('#save-form')[0].reset();
                     OesUtil.refreshTable("#studentInfo");

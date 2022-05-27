@@ -44,13 +44,14 @@ public class CourseController {
         return AjaxResponse.success(this.courseService.getById(id));
     }
 
+    /**
+     * 显示所有课程
+     * @return 课程信息
+     */
     @GetMapping("/lists")
-    public Map<String, Object>listsCourse() {
+    public AjaxResponse listCourse() {
         List<Course> courses = this.courseService.list();
-
-        // 统计集合总数
-        int total = courses.size();
-        return PageUtil.toPage(courses, total);
+        return AjaxResponse.success(PageUtil.toPageList(courses, courses.size()));
     }
 
     /**

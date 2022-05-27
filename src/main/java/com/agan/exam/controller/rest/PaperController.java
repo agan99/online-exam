@@ -1,5 +1,6 @@
 package com.agan.exam.controller.rest;
 
+import com.agan.exam.base.AjaxResponse;
 import com.agan.exam.base.R;
 import com.agan.exam.model.Paper;
 import com.agan.exam.model.Teacher;
@@ -22,14 +23,14 @@ public class PaperController {
     private final PaperService paperService;
 
     /**
-     * 模糊查询试卷列表
+     * 分页查询试卷列表
      * @param page 分页信息
      * @param entity 查询关键字
      * @return 分页返回试卷列表
      */
-    @GetMapping("/list")
-    public Map<String, Object> pagePaper(Page<Paper> page, QueryPaperDto entity) {
-        return this.paperService.pagePaper(page, entity);
+    @GetMapping("/listByPage")
+    public AjaxResponse pagePaper(Page<Paper> page, QueryPaperDto entity) {
+        return AjaxResponse.success(this.paperService.pagePaper(page, entity));
     }
 
     /**
@@ -38,8 +39,8 @@ public class PaperController {
      * @return 试卷信息
      */
     @GetMapping("/{id}")
-    public Paper getOne(@PathVariable Integer id) {
-        return this.paperService.getById(id);
+    public AjaxResponse getOne(@PathVariable Integer id) {
+        return AjaxResponse.success(this.paperService.getById(id));
     }
 
     /**
@@ -48,21 +49,18 @@ public class PaperController {
      * @return 试卷页面
      */
     @PostMapping("/delete/{id}")
-    public R delPaper(@PathVariable Integer id) {
-        // 级联删除试卷（详见接口实现类）
-        paperService.deletePaperById(id);
-        return R.success();
+    public AjaxResponse delPaper(@PathVariable Integer id) {
+        return AjaxResponse.success(paperService.deletePaperById(id));
     }
 
     /**
-     * 修改修生信息请求
-     * @param paper
-     * @return
+     * 指派班级
+     * @param paper 试卷信息
+     * @return 成功提醒
      */
     @PostMapping("/update/gradeIds")
-    public R updateGradeIds(Paper paper) {
-        this.paperService.updateGradeIds(paper);
-        return R.success();
+    public AjaxResponse updateGradeIds(Paper paper) {
+        return AjaxResponse.success(this.paperService.updateGradeIds(paper));
     }
 
     /**

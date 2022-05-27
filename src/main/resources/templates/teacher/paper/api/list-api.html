@@ -1,6 +1,6 @@
 <script>
     // -------------------------------- 初始化表单 ----------------------------------------
-    OesUtil.initQueryTable('#paperInfo', "/api/paper/list?teacherId=${session.teacherId}" , "get", [{
+    OesUtil.queryTable('#paperInfo', "/api/paper/listByPage?teacherId=${session.teacherId}" , "get", [{
             title: '序号',
             field: 'id',
             sortable: false,
